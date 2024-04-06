@@ -16,7 +16,7 @@ export function getBase64(file: File): Promise<string | ArrayBuffer | null> {
 export const generateDescription = async (file: File) => {
     const base64 = await getBase64(file);
     if (typeof base64 != "string") {
-        return
+        return "Dish description"
     }
     const response = await openai.chat.completions.create({
         model: "gpt-4-vision-preview",
