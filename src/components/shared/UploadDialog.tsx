@@ -15,6 +15,7 @@ import React, {useState} from "react";
 import FileUploader from "@/components/shared/FileUploader.tsx";
 import {Soup} from "lucide-react";
 import {Input} from "@/components/ui/input.tsx";
+import {generateDescription} from "@/lib/openai/api.ts";
 
 const formSchema = z.object({
     file: z.custom<File[]>(),
@@ -62,7 +63,8 @@ export function UploadForm({setOpen}: UploadFormProps) {
     })
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values)
+        const desc = await generateDescription(values.file[0])
+        console.log(desc)
     }
 
 
