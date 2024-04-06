@@ -15,7 +15,9 @@ import React, {useState} from "react";
 import FileUploader from "@/components/shared/FileUploader.tsx";
 import {Soup} from "lucide-react";
 import {Input} from "@/components/ui/input.tsx";
-import {generateDescription} from "@/lib/openai/api.ts";
+import {useCreatePost, useGenerateDescription} from "@/lib/tanstack-query/queriesAndMutations.ts";
+import {LoadingSpinner} from "@/components/shared/LoadingSpinner.tsx";
+import {useToast} from "@/components/ui/use-toast.ts";
 
 const formSchema = z.object({
     file: z.custom<File[]>(),
@@ -52,7 +54,9 @@ type UploadFormProps = {
 }
 
 export function UploadForm({setOpen}: UploadFormProps) {
-
+    const {mutateAsync: createPost, isPending: isLoadingCreate} = useCreatePost()
+    const {mutateAsync: generateDescription, isPending: isGeneratingDescription} = useGenerateDescription()
+    const {toast} = useToast()
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -63,8 +67,30 @@ export function UploadForm({setOpen}: UploadFormProps) {
     })
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        const desc = await generateDescription(values.file[0])
-        console.log(desc)
+        const description = await generateDescription(values.file[0])
+        setOpen(false)
+        await createPost({
+            ...values,
+            name: values.dishName,
+            userId: "sampleUserId",
+            description: description
+        });
+        toast({
+            description: "Dish successfully uploaded!"
+        })
+    }
+
+    if (isGeneratingDescription || isLoadingCreate) {
+        return (
+            <div className='flex flex-col items-center justify-center gap-8 mt-6'>
+                <LoadingSpinner/>
+                <p className='text-sm text-muted-foreground'>
+                    {isGeneratingDescription
+                        ? "Generating description..."
+                        : "Uploading.."}
+                </p>
+            </div>
+        )
     }
 
 
@@ -77,13 +103,13 @@ export function UploadForm({setOpen}: UploadFormProps) {
                 <FormField
                     control={form.control}
                     name="dishName"
-                    render={({field}) => (
+                    render={({ field }) => (
                         <FormItem className="w-full">
                             <FormLabel>Dish name</FormLabel>
                             <FormControl>
                                 <Input type="text" className="shad-input" {...field} />
                             </FormControl>
-                            <FormMessage/>
+                            <FormMessage />
                         </FormItem>
                     )}
                 />
@@ -104,6 +130,7 @@ export function UploadForm({setOpen}: UploadFormProps) {
                 <div className="flex flex-col gap-4 w-full">
                     <Button
                         type="submit"
+                        disabled={isLoadingCreate || isGeneratingDescription}
                     >
                         Upload
                     </Button>
