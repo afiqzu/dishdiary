@@ -93,7 +93,6 @@ export function UploadForm({setOpen}: UploadFormProps) {
         )
     }
 
-
     return (
         <Form {...form}>
             <form
@@ -107,7 +106,7 @@ export function UploadForm({setOpen}: UploadFormProps) {
                         <FormItem className="w-full">
                             <FormLabel>Dish name</FormLabel>
                             <FormControl>
-                                <Input type="text" className="shad-input" {...field} />
+                                <Input type="text" {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>

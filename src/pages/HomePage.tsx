@@ -1,8 +1,14 @@
 import {BookHeart} from "lucide-react";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card.tsx";
 import UploadDialog from "@/components/shared/UploadDialog.tsx";
+import PostCard from "@/components/shared/PostCard.tsx";
+import {useGetRecentPosts} from "@/lib/tanstack-query/queriesAndMutations.ts";
+import {Skeleton} from "@/components/ui/skeleton.tsx";
+import {Models} from "appwrite";
 
 const HomePage = () => {
+    const {data: posts, isPending: isPostLoading} = useGetRecentPosts()
+
     return (
         <div className="flex min-h-screen w-full items-center flex-col bg-muted/40">
             <div className="flex flex-col sm:gap-4 sm:py-4 sm:px-14 w-full max-w-[1280px]">
@@ -34,6 +40,17 @@ const HomePage = () => {
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 md:gap-4 lg:grid-cols-4">
+                                {isPostLoading ? (
+                                    Array.from({ length: 12 }, (_, index) => (
+                                        <Skeleton key={index} className="h-full aspect-square" />
+                                    ))
+                                ) : (
+                                    posts?.documents.map((post: Models.Document) => (
+                                        <PostCard post={post} key={post.$id} />
+                                    ))
+                                )}
+                            </div>
                         </CardContent>
                     </Card>
                 </main>
