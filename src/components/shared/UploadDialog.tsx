@@ -11,6 +11,14 @@ import {
     DialogTitle,
     DialogTrigger
 } from "@/components/ui/dialog.tsx";
+import {
+    Drawer,
+    DrawerContent,
+    DrawerDescription,
+    DrawerHeader,
+    DrawerTitle,
+    DrawerTrigger,
+} from "@/components/ui/drawer"
 import React, {useState} from "react";
 import FileUploader from "@/components/shared/FileUploader.tsx";
 import {Soup} from "lucide-react";
@@ -18,32 +26,63 @@ import {Input} from "@/components/ui/input.tsx";
 import {useCreatePost, useGenerateDescription} from "@/lib/tanstack-query/queriesAndMutations.ts";
 import {LoadingSpinner} from "@/components/shared/LoadingSpinner.tsx";
 import {useToast} from "@/components/ui/use-toast.ts";
+import {useMediaQuery} from "@/hooks/use-media-query.ts";
 
 const formSchema = z.object({
     file: z.custom<File[]>(),
     dishName: z.string().min(1, {message: "Please enter a dish name"})
 })
+
 const UploadDialog = () => {
+    const isDesktop = useMediaQuery("(min-width: 768px)")
     const [open, setOpen] = useState(false)
-    return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-                <Button>Add a new dish</Button>
-            </DialogTrigger>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle className='flex items-center gap-2'>
-                        <p>Add a new dish</p>
-                        <Soup/>
-                    </DialogTitle>
-                    <DialogDescription>
-                        Upload a photo of your dish below. Click upload once you are done.
-                    </DialogDescription>
-                </DialogHeader>
-                <UploadForm setOpen={setOpen}/>
-            </DialogContent>
-        </Dialog>
-    )
+
+    if (isDesktop) {
+        return (
+            <Dialog open={open} onOpenChange={setOpen}>
+                <DialogTrigger asChild>
+                    <Button>Add a new dish</Button>
+                </DialogTrigger>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle className='flex items-center gap-2'>
+                            <p>Add a new dish</p>
+                            <Soup/>
+                        </DialogTitle>
+                        <DialogDescription>
+                            Upload a photo of your dish below. Click upload once you are done.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <UploadForm setOpen={setOpen}/>
+                </DialogContent>
+            </Dialog>
+        )
+    } else {
+        return (
+            <Drawer open={open} onOpenChange={setOpen}>
+                <DrawerTrigger asChild>
+                    <Button>Add a new meal</Button>
+                </DrawerTrigger>
+                <DrawerContent>
+                    <div className="mx-auto w-full max-w-lg">
+                        <DrawerHeader className='pb-0'>
+                            <DrawerTitle className='flex items-center gap-2'>
+                                <p>Add a new dish</p>
+                                <Soup/>
+                            </DrawerTitle>
+                            <DrawerDescription className='text-start'>
+                                Upload a photo of your dish below. Tap upload once you are done.
+                            </DrawerDescription>
+                        </DrawerHeader>
+                        <div className="flex flex-col gap-4 p-4">
+                            <UploadForm setOpen={setOpen}/>
+                        </div>
+                    </div>
+                </DrawerContent>
+            </Drawer>
+        )
+    }
+
 
 }
 export default UploadDialog
