@@ -16,6 +16,9 @@ module.exports = {
         "2xl": "1400px",
       },
     },
+    fontFamily : {
+      "playfair" : ['Playfair Display', 'serif']
+    },
     extend: {
       colors: {
         "light" : "#f9f6f2",
