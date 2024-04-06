@@ -1,6 +1,6 @@
 import {BookHeart} from "lucide-react";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card.tsx";
-import {Button} from "@/components/ui/button.tsx";
+import UploadDialog from "@/components/shared/UploadDialog.tsx";
 
 const HomePage = () => {
     return (
@@ -23,7 +23,7 @@ const HomePage = () => {
                             </CardDescription>
                         </CardHeader>
                         <CardFooter>
-                            <Button>Upload</Button>
+                        <UploadDialog/>
                         </CardFooter>
                     </Card>
                     <Card>
