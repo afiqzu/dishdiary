@@ -145,7 +145,7 @@ export function UploadForm({setOpen}: UploadFormProps) {
                         <FormItem className="w-full">
                             <FormLabel>Dish name</FormLabel>
                             <FormControl>
-                                <Input type="text" {...field} />
+                                <Input type="text" className='text-[16px]' {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
